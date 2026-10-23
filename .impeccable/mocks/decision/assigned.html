@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=Literata:ital,opsz,wght@1,7..72,400;1,7..72,500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+body{width:1440px;height:900px;overflow:hidden;font:15px/1.45 Figtree,sans-serif;color:#1b2140;background:#fbfaf6;display:grid;grid-template-columns:232px 1fr}
+.rail{background:#1d3a8a;color:#eef1fb;padding:22px 0;display:flex;flex-direction:column;gap:4px}
+.brand{font-weight:700;font-size:17px;padding:0 22px 18px;letter-spacing:-.01em}
+.tab{display:flex;align-items:center;gap:10px;padding:9px 22px;font-weight:500;color:#cdd6f3}
+.tab.on{background:#fbfaf6;color:#1d3a8a;font-weight:700;margin-right:-1px}
+.tab i{width:10px;height:22px;border-radius:2px;display:inline-block}
+.rail h6{font:600 11px Figtree;letter-spacing:.06em;text-transform:uppercase;color:#93a3d8;padding:18px 22px 6px}
+.page{position:relative;background:repeating-linear-gradient(#fbfaf6 0 31px,#dfe6f6 31px 32px);display:grid;grid-template-columns:1fr 340px}
+.page:after{content:"";position:absolute;top:0;bottom:0;right:340px;width:2px;background:#d8322b}
+.work{padding:28px 40px 0 44px}
+h1{font-size:30px;font-weight:700;letter-spacing:-.02em;line-height:32px;margin-bottom:32px}
+.row{display:grid;grid-template-columns:1.25fr 1fr;gap:28px;margin-bottom:28px}
+.box{background:#fff;border:1px solid #d5dcef;border-radius:6px;padding:18px 20px;box-shadow:0 1px 2px rgba(29,58,138,.06)}
+.box h2{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;justify-content:space-between}
+.remote{display:grid;grid-template-columns:14px 1fr auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid #edf0f8}
+.remote i{width:14px;height:30px;border-radius:2px;background:#f2b500}
+.remote b{display:block;font-weight:600}.remote small{color:#5a6488}
+.num{font-variant-numeric:tabular-nums;font-weight:600}
+.bar{height:8px;background:#e8ecf7;border-radius:4px;margin-top:8px;overflow:hidden}.bar span{display:block;height:100%;width:41%;background:#1d3a8a}
+.job{display:grid;grid-template-columns:1fr auto;gap:4px 16px;padding:10px 0;border-top:1px solid #edf0f8}
+.job .bar span{background:#1f8f5a;width:68%}
+.warn{background:#fff6dc;border:1px solid #f2b500;border-radius:6px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start;margin-bottom:28px}
+.warn b{color:#7a5600}
+.hist{display:grid;grid-template-columns:150px 1fr 80px;gap:10px;align-items:center;padding:7px 0;font-size:14px}
+.hist span.d{height:10px;background:#1d3a8a;border-radius:2px}
+.btn{display:inline-block;background:#1d3a8a;color:#fff;font-weight:600;padding:8px 14px;border-radius:6px;font-size:14px}
+.btn.ghost{background:#fff;color:#1d3a8a;border:1px solid #c4cde8}
+.notes{padding:96px 30px 0 34px;font:italic 15px/32px Literata,serif;color:#33407a}
+.note{margin-bottom:32px}.note b{font:600 13px/32px Figtree;font-style:normal;color:#d8322b;display:block}
+</style></head><body>
+<nav class="rail">
+ <div class="brand">rclone · painel</div>
+ <a class="tab on"><i style="background:#d8322b"></i>Visão geral</a>
+ <a class="tab"><i style="background:#f2b500"></i>Arquivos</a>
+ <a class="tab"><i style="background:#1f8f5a"></i>Transferir</a>
+ <a class="tab"><i style="background:#8a5cd0"></i>Montar como disco</a>
+ <a class="tab"><i style="background:#2aa3c9"></i>Tarefas</a>
+ <h6>Contas</h6>
+ <a class="tab"><i style="background:#f2b500"></i>gustavo-lel-obsidian</a>
+ <a class="tab"><i style="background:#fff;opacity:.4"></i>+ Conectar conta</a>
+</nav>
+<main class="page">
+ <section class="work">
+  <h1>Visão geral</h1>
+  <div class="warn"><span>⚠</span><div><b>O Google limitou o ritmo de envio às 17:17.</b> O rclone tentou de novo e conseguiu na 2ª tentativa. Nada foi perdido.</div></div>
+  <div class="row">
+   <div class="box"><h2>Contas conectadas <span class="btn ghost">Conectar</span></h2>
+    <div class="remote"><i></i><div><b>gustavo-lel-obsidian</b><small>Google Drive · última atividade há 12 min</small><div class="bar"><span></span></div></div><div class="num">6,2 / 15 GB</div></div>
+   </div>
+   <div class="box"><h2>Em andamento</h2>
+    <div class="job"><b>Backup do Obsidian</b><span class="num">68%</span><small>~/Documents/Obsidian → gustavo-lel-obsidian:Vault</small><span class="num">1,4 MB/s</span><div class="bar" style="grid-column:1/-1"><span></span></div></div>
+    <div style="margin-top:14px;display:flex;gap:10px"><span class="btn">Nova transferência</span><span class="btn ghost">Ver tarefas</span></div>
+   </div>
+  </div>
+  <div class="box"><h2>Últimos 7 dias</h2>
+   <div class="hist"><span>Hoje 17:05</span><span class="d" style="width:62%"></span><span class="num">12 min</span></div>
+   <div class="hist"><span>Ontem 09:40</span><span class="d" style="width:24%"></span><span class="num">4 min</span></div>
+   <div class="hist"><span>Seg 22:10</span><span class="d" style="width:38%"></span><span class="num">7 min</span></div>
+  </div>
+ </section>
+ <aside class="notes">
+  <div class="note"><b>O que é isto?</b>O aviso amarelo veio do log do rclone. “Limitou o ritmo” quer dizer que o Google pediu para ir mais devagar; o rclone espera e tenta de novo sozinho.</div>
+  <div class="note"><b>Contas</b>Cada conta é um “remote”: o jeito do rclone de chamar uma nuvem conectada. A barra mostra o espaço usado.</div>
+  <div class="note"><b>Em andamento</b>Copiar nunca apaga nada no destino. Sincronizar sim — por isso pede confirmação.</div>
+ </aside>
+</main>
+</body></html>

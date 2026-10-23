@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Literata:opsz,wght@7..72,400;7..72,600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+body{width:1440px;height:900px;overflow:hidden;font:15px/1.5 "Hanken Grotesk",sans-serif;color:#1d1d1b;background:#e8722c;display:grid;grid-template-columns:1fr 96px}
+.board{padding:40px 40px 0 56px}
+.leaf{background:rgba(250,248,242,.94);border-radius:3px;padding:30px 36px;height:820px;box-shadow:0 2px 6px rgba(0,0,0,.12);display:grid;grid-template-columns:1fr 300px;gap:36px}
+h1{font:600 30px Literata,serif;margin-bottom:22px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:22px}
+.mod{border:1px solid #d9d4c6;border-radius:3px;padding:16px 18px;background:#fff}
+.mod h2{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;color:#9a4a17}
+.num{font-variant-numeric:tabular-nums;font-weight:600}
+.bar{height:8px;background:#efe9db;margin-top:8px}.bar span{display:block;height:100%;background:#e8722c}
+.help{font:15px/1.6 Literata,serif;color:#4a443a;border-left:1px solid #d9d4c6;padding-left:24px}
+.help h3{font:700 13px "Hanken Grotesk";text-transform:uppercase;letter-spacing:.05em;color:#9a4a17;margin:18px 0 6px}
+.tabs{display:flex;flex-direction:column;padding-top:40px}
+.t{height:110px;writing-mode:vertical-rl;padding:14px 10px;font-weight:700;color:#fff;font-size:14px}
+</style></head><body>
+<section class="board"><div class="leaf"><div>
+ <h1>Visão geral</h1>
+ <div class="row">
+  <div class="mod"><h2>Contas</h2><b>gustavo-lel-obsidian</b><p>Google Drive</p><div class="bar"><span style="width:41%"></span></div><p class="num">6,2 de 15 GB</p></div>
+  <div class="mod"><h2>Em andamento</h2><b>Backup do Obsidian</b><p>~/Documents/Obsidian → Vault</p><div class="bar"><span style="width:68%;background:#2f9e5a"></span></div><p class="num">68% · 1,4 MB/s</p></div>
+ </div>
+ <div class="mod" style="background:#fff3ef;border-color:#e0553a"><h2 style="color:#c23b22">Errata</h2>Google limitou o ritmo às 17:17. O rclone tentou de novo e conseguiu.</div>
+ <div class="mod" style="margin-top:22px"><h2>Últimos dias</h2><p class="num">Hoje 17:05 · 12 min · 604 arquivos</p><p class="num">Ontem 09:40 · 4 min · 88 arquivos</p></div>
+</div>
+<aside class="help"><h3>Como ler esta página</h3>Cada “conta” é um remote: uma nuvem que o rclone já sabe acessar.<h3>Copiar ou sincronizar?</h3>Copiar só envia. Sincronizar deixa o destino igual à origem e pode apagar arquivos.<h3>Avisos</h3>Erratas aparecem quando algo precisou ser repetido ou falhou.</aside>
+</div></section>
+<nav class="tabs"><div class="t" style="background:#e8722c;height:160px">Visão geral</div><div class="t" style="background:#f2c230">Arquivos</div><div class="t" style="background:#2f9e5a">Transferir</div><div class="t" style="background:#1f8a8f">Montar</div><div class="t" style="background:#2c46b8">Tarefas</div><div class="t" style="background:#7a4cb8">Contas</div></nav>
+</body></html>

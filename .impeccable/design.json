@@ -1,0 +1,177 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-22T00:00:00Z",
+  "title": "Design System: rclone painel",
+  "extensions": {
+    "colorMeta": {
+      "accent": { "role": "primary", "displayName": "Signal Indigo", "canonical": "#7c83ff", "light": "#4f56e8", "tonalRamp": ["#1b1d4d", "#262a73", "#353b9e", "#4f56e8", "#7c83ff", "#9096ff", "#b7bbff", "#e3e4ff"] },
+      "accent-hover": { "role": "primary", "displayName": "Signal Indigo, lifted", "canonical": "#9096ff", "light": "#3f46d6", "tonalRamp": ["#1b1d4d", "#262a73", "#353b9e", "#4f56e8", "#7c83ff", "#9096ff", "#b7bbff", "#e3e4ff"] },
+      "accent-fg": { "role": "primary", "displayName": "Ink on Indigo", "canonical": "#0a0a0b", "light": "#ffffff", "tonalRamp": ["#0a0a0b", "#111113", "#18181b", "#232327", "#85858d", "#a0a0a8", "#ededef", "#ffffff"] },
+      "accent-soft": { "role": "primary", "displayName": "Indigo Wash", "canonical": "rgba(124, 131, 255, 0.14)", "light": "rgba(79, 86, 232, 0.1)", "tonalRamp": ["#1b1d4d", "#262a73", "#353b9e", "#4f56e8", "#7c83ff", "#9096ff", "#b7bbff", "#e3e4ff"] },
+      "ok": { "role": "secondary", "displayName": "Done Green", "canonical": "#45c486", "light": "#13854f", "tonalRamp": ["#0b2e1d", "#0f4a2e", "#13854f", "#2aa86a", "#45c486", "#74d6a5", "#a9e7c7", "#e0f7eb"] },
+      "ok-soft": { "role": "secondary", "displayName": "Done Green, soft", "canonical": "rgba(69, 196, 134, 0.13)", "light": "rgba(19, 133, 79, 0.1)", "tonalRamp": ["#0b2e1d", "#0f4a2e", "#13854f", "#2aa86a", "#45c486", "#74d6a5", "#a9e7c7", "#e0f7eb"] },
+      "warn": { "role": "secondary", "displayName": "Caution Amber", "canonical": "#e9b44c", "light": "#9a6400", "tonalRamp": ["#3a2600", "#5c3d00", "#9a6400", "#c48400", "#e9b44c", "#f0c878", "#f6dcaa", "#fcf3e0"] },
+      "warn-soft": { "role": "secondary", "displayName": "Caution Amber, soft", "canonical": "rgba(233, 180, 76, 0.13)", "light": "rgba(196, 132, 0, 0.12)", "tonalRamp": ["#3a2600", "#5c3d00", "#9a6400", "#c48400", "#e9b44c", "#f0c878", "#f6dcaa", "#fcf3e0"] },
+      "danger": { "role": "secondary", "displayName": "Fault Red", "canonical": "#f0626a", "light": "#d02a35", "tonalRamp": ["#3d0d11", "#66141b", "#a81f29", "#d02a35", "#f0626a", "#f48a90", "#f8b6ba", "#fde6e7"] },
+      "danger-soft": { "role": "secondary", "displayName": "Fault Red, soft", "canonical": "rgba(240, 98, 106, 0.13)", "light": "rgba(208, 42, 53, 0.09)", "tonalRamp": ["#3d0d11", "#66141b", "#a81f29", "#d02a35", "#f0626a", "#f48a90", "#f8b6ba", "#fde6e7"] },
+      "bg": { "role": "neutral", "displayName": "Ground", "canonical": "#0a0a0b", "light": "#fbfbfc", "tonalRamp": ["#0a0a0b", "#0d0d0f", "#111113", "#18181b", "#1f1f23", "#232327", "#2e2e33", "#85858d"] },
+      "bg-raised": { "role": "neutral", "displayName": "Panel", "canonical": "#111113", "light": "#ffffff", "tonalRamp": ["#0a0a0b", "#0d0d0f", "#111113", "#18181b", "#1f1f23", "#232327", "#2e2e33", "#85858d"] },
+      "bg-hover": { "role": "neutral", "displayName": "Hover Tint", "canonical": "#18181b", "light": "#f2f2f4", "tonalRamp": ["#0a0a0b", "#0d0d0f", "#111113", "#18181b", "#1f1f23", "#232327", "#2e2e33", "#85858d"] },
+      "bg-active": { "role": "neutral", "displayName": "Active Tint", "canonical": "#1f1f23", "light": "#eaeaee", "tonalRamp": ["#0a0a0b", "#0d0d0f", "#111113", "#18181b", "#1f1f23", "#232327", "#2e2e33", "#85858d"] },
+      "bg-inset": { "role": "neutral", "displayName": "Inset Well", "canonical": "#0d0d0f", "light": "#f5f5f7", "tonalRamp": ["#0a0a0b", "#0d0d0f", "#111113", "#18181b", "#1f1f23", "#232327", "#2e2e33", "#85858d"] },
+      "border": { "role": "neutral", "displayName": "Hairline", "canonical": "#232327", "light": "#e4e4e8", "tonalRamp": ["#0a0a0b", "#0d0d0f", "#111113", "#18181b", "#1f1f23", "#232327", "#2e2e33", "#85858d"] },
+      "border-strong": { "role": "neutral", "displayName": "Hairline, strong", "canonical": "#2e2e33", "light": "#d4d4da", "tonalRamp": ["#0a0a0b", "#0d0d0f", "#111113", "#18181b", "#1f1f23", "#232327", "#2e2e33", "#85858d"] },
+      "text": { "role": "neutral", "displayName": "Ink", "canonical": "#ededef", "light": "#18181b", "tonalRamp": ["#18181b", "#2e2e33", "#55555e", "#6b6b74", "#85858d", "#a0a0a8", "#d4d4da", "#ededef"] },
+      "text-2": { "role": "neutral", "displayName": "Ink, secondary", "canonical": "#a0a0a8", "light": "#55555e", "tonalRamp": ["#18181b", "#2e2e33", "#55555e", "#6b6b74", "#85858d", "#a0a0a8", "#d4d4da", "#ededef"] },
+      "text-3": { "role": "neutral", "displayName": "Ink, faint", "canonical": "#85858d", "light": "#6b6b74", "tonalRamp": ["#18181b", "#2e2e33", "#55555e", "#6b6b74", "#85858d", "#a0a0a8", "#d4d4da", "#ededef"] }
+    },
+    "typographyMeta": {
+      "headline": { "displayName": "Headline", "purpose": "Page titles and summary tile values." },
+      "title": { "displayName": "Title", "purpose": "Dialog titles." },
+      "section": { "displayName": "Section", "purpose": "Section heads inside a page." },
+      "body": { "displayName": "Body", "purpose": "Default UI text; 500 for buttons, nav and field labels." },
+      "help": { "displayName": "Help", "purpose": "Field help, hint popovers, tile labels, small buttons." },
+      "label": { "displayName": "Label", "purpose": "Table headers, tile sub-lines, metadata." },
+      "mono": { "displayName": "Machine Literal", "purpose": "Paths, remote names, routes, backend types, config keys, filter patterns, rate values." }
+    },
+    "shadows": [
+      { "name": "pop", "value": "0 8px 24px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.35)", "light": "0 8px 24px rgba(20, 20, 30, 0.12), 0 2px 6px rgba(20, 20, 30, 0.08)", "purpose": "Floating layers only: hint popovers, menus, dialogs, toasts." },
+      { "name": "focus-halo", "value": "0 0 0 3px var(--accent-soft)", "purpose": "Inputs and selects on focus, with an accent border." },
+      { "name": "backdrop", "value": "rgba(0, 0, 0, 0.55) + blur(2px)", "purpose": "Modal dialog backdrop." }
+    ],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "The single easing for every entrance and transition." },
+      { "name": "hover", "value": "120ms", "purpose": "Background, border and color changes on controls." },
+      { "name": "chevron", "value": "150ms", "purpose": "Disclosure chevron rotation." },
+      { "name": "dialog-in", "value": "160ms; opacity 0 to 1, translateY(6px) scale(0.99) to rest", "purpose": "Dialogs; toasts reuse it at 180ms." },
+      { "name": "page-in", "value": "180ms; opacity 0 to 1, translateY(4px) to rest", "purpose": "Route changes." },
+      { "name": "meter", "value": "400ms width", "purpose": "Progress and quota fills." },
+      { "name": "reduced-motion", "value": "0.01ms", "purpose": "All animation and transition durations under prefers-reduced-motion." }
+    ],
+    "breakpoints": [
+      { "name": "grid-2up", "value": "1100px", "purpose": "4-column tile, mode and preview grids drop to 2." },
+      { "name": "shell-collapse", "value": "860px", "purpose": "Sidebar becomes a horizontal nav strip; two-column grids stack." },
+      { "name": "compact", "value": "520px", "purpose": "Modes stack, job table reflows into cards, tighter tiles." }
+    ],
+    "layout": {
+      "sidebarWidth": "240px",
+      "contentMaxWidth": "1180px",
+      "controlHeight": "32px",
+      "tableRowHeight": "44px",
+      "tableHeadHeight": "36px"
+    }
+  },
+  "components": [
+    {
+      "name": "Button",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "Default bordered button for secondary actions.",
+      "html": "<button class=\"ds-btn\">Cancelar</button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; background: var(--bg-raised); color: var(--text); border: 1px solid var(--border-strong); border-radius: 6px; font: 500 14px/1.5 var(--font); cursor: pointer; transition: background 120ms, border-color 120ms, color 120ms; } .ds-btn:hover { background: var(--bg-hover); } .ds-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one primary action per view, top right of the page head or in a dialog footer.",
+      "html": "<button class=\"ds-btn-primary\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14\"/><path d=\"M12 5v14\"/></svg>Nova transferência</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; background: var(--accent); color: var(--accent-fg); border: 1px solid var(--accent); border-radius: 6px; font: 500 14px/1.5 var(--font); cursor: pointer; transition: background 120ms, border-color 120ms; } .ds-btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); } .ds-btn-primary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Borderless section links and row actions.",
+      "html": "<button class=\"ds-btn-ghost\">Ver todas</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; background: none; color: var(--text-2); border: 1px solid transparent; border-radius: 6px; font: 500 14px/1.5 var(--font); cursor: pointer; transition: background 120ms, color 120ms; } .ds-btn-ghost:hover { background: var(--bg-hover); color: var(--text); } .ds-btn-ghost:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Inset field with indigo focus border and halo; label above, help below.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Pasta de destino</span><input class=\"ds-input ds-mono\" value=\"/home/gustavo/Nuvem\"><span class=\"ds-field-help\">Uma pasta vazia no seu computador onde a conta vai aparecer.</span></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 6px; font: 14px/1.5 var(--font); color: var(--text); } .ds-field-label { font-weight: 500; } .ds-field-help { color: var(--text-2); font-size: 13px; } .ds-input { height: 32px; padding: 0 10px; background: var(--bg-inset); color: var(--text); border: 1px solid var(--border-strong); border-radius: 6px; font: inherit; transition: border-color 120ms, box-shadow 120ms; } .ds-mono { font-family: var(--mono); font-size: 0.92em; } .ds-input:hover { border-color: var(--text-3); } .ds-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }"
+    },
+    {
+      "name": "Sidebar Nav",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "32px nav items; current page takes the active tint.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-item\" aria-current=\"page\" href=\"#\">Visão geral</a><a class=\"ds-nav-item\" href=\"#\">Arquivos</a><a class=\"ds-nav-item\" href=\"#\">Tarefas<span class=\"ds-count\">1</span></a></nav>",
+      "css": ".ds-nav { display: flex; flex-direction: column; gap: 2px; width: 224px; padding: 8px; background: var(--bg); font: 500 14px/1.5 var(--font); } .ds-nav-item { display: flex; align-items: center; gap: 10px; height: 32px; padding: 0 8px; border-radius: 6px; color: var(--text-2); text-decoration: none; } .ds-nav-item:hover { background: var(--bg-hover); color: var(--text); } .ds-nav-item[aria-current=\"page\"] { background: var(--bg-active); color: var(--text); } .ds-nav-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; } .ds-count { margin-left: auto; padding: 0 7px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); font-size: 11.5px; font-weight: 600; }"
+    },
+    {
+      "name": "Status Pill",
+      "kind": "chip",
+      "refersTo": "pill-run",
+      "description": "Job state: soft fill with same-state ink.",
+      "html": "<span class=\"ds-pill ds-run\">Em andamento</span> <span class=\"ds-pill ds-ok\">Concluída</span> <span class=\"ds-pill ds-fail\">Falhou</span>",
+      "css": ".ds-pill { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 999px; font: 500 12px var(--font); white-space: nowrap; } .ds-run { background: var(--accent-soft); color: var(--accent); } .ds-ok { background: var(--ok-soft); color: var(--ok); } .ds-fail { background: var(--danger-soft); color: var(--danger); }"
+    },
+    {
+      "name": "Summary Tile",
+      "kind": "card",
+      "refersTo": "tile",
+      "description": "Hairline-bordered panel with a label, a tabular headline value and a faint sub-line.",
+      "html": "<div class=\"ds-tile\"><span class=\"ds-tile-label\">Espaço usado</span><span class=\"ds-tile-value\">154,2 GB</span><span class=\"ds-tile-sub\">de 1 conta que informa o espaço</span><div class=\"ds-meter\"><span style=\"width:80%\"></span></div></div>",
+      "css": ".ds-tile { display: flex; flex-direction: column; gap: 2px; width: 240px; padding: 16px; background: var(--bg-raised); border: 1px solid var(--border); border-radius: 10px; font: 14px/1.5 var(--font); color: var(--text); } .ds-tile-label { color: var(--text-2); font-size: 13px; } .ds-tile-value { margin-top: 4px; font-size: 22px; font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; } .ds-tile-sub { color: var(--text-3); font-size: 12.5px; } .ds-meter { margin-top: 8px; height: 6px; border-radius: 999px; background: var(--bg-active); overflow: hidden; } .ds-meter > span { display: block; height: 100%; border-radius: inherit; background: var(--accent); transition: width 400ms cubic-bezier(0.16, 1, 0.3, 1); }"
+    },
+    {
+      "name": "Inline Hint",
+      "kind": "custom",
+      "refersTo": "hint",
+      "description": "Signature: a ? beside an rclone term that opens a plain-Portuguese explanation.",
+      "html": "<span class=\"ds-hint\">Espelhar <button class=\"ds-hint-btn\" aria-label=\"O que é: Espelhar\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\"/><path d=\"M12 17h.01\"/></svg></button><span class=\"ds-hint-pop\"><strong>Espelhar (sync)</strong>Deixa o destino igual à origem. Arquivos que só existem no destino são apagados.</span></span>",
+      "css": ".ds-hint { position: relative; display: inline-flex; align-items: center; gap: 6px; font: 500 14px/1.5 var(--font); color: var(--text); } .ds-hint-btn { display: inline-flex; padding: 0; background: none; border: 0; border-radius: 50%; color: var(--text-3); cursor: help; } .ds-hint-btn:hover, .ds-hint-btn:focus-visible { color: var(--text); } .ds-hint-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; } .ds-hint-pop { position: absolute; top: calc(100% + 6px); left: 0; width: 280px; padding: 10px 12px; background: var(--bg-raised); border: 1px solid var(--border-strong); border-radius: 6px; box-shadow: var(--shadow-pop); font-size: 13px; font-weight: 400; z-index: 30; } .ds-hint-pop strong { display: block; margin-bottom: 2px; font-weight: 600; }"
+    },
+    {
+      "name": "Callout",
+      "kind": "custom",
+      "refersTo": "callout",
+      "description": "State banner with soft fill, tinted border and state icon.",
+      "html": "<div class=\"ds-callout ds-callout-info\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 16v-4\"/><path d=\"M12 8h.01\"/></svg><div>Faça um teste antes: o rclone mostra o que mudaria sem mexer em nada.</div></div>",
+      "css": ".ds-callout { display: flex; align-items: flex-start; gap: 10px; padding: 12px 16px; border: 1px solid; border-radius: 10px; font: 14px/1.5 var(--font); color: var(--text); } .ds-callout svg { flex: none; margin-top: 2px; } .ds-callout-info { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 35%, transparent); } .ds-callout-info svg { color: var(--accent); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Operator's Panel",
+    "overview": "The category standard, executed at Vercel/Linear craft. A near-black ground holds one-step-lighter panels drawn by hairline borders, with high-contrast off-white text, one quieter secondary grey and one faint grey. A single indigo accent marks primary actions, focus and selection; green, amber and red speak only about state. Nothing is themed or metaphorical: the conventions (sidebar, summary tiles, tables, dialogs) are the commitment, and the quality lives in the details: even spacing on a 4px grid, compact 32px controls, tabular numerals, and machine literals set in mono.\n\nThe panel is dense but calm. Every page opens with a title and a one-line plain-Portuguese description, and unfamiliar rclone terms carry an inline \"?\" hint right where they appear. Live data (progress, quotas, counts) updates in place without shifting layout. A light theme exists as a full re-mapping of the same tokens under `:root[data-theme=\"light\"]`; components never branch on theme.",
+    "keyCharacteristics": [
+      "Dark by default; light theme by token swap only.",
+      "Flat tonal layering with 1px hairlines; shadow only on floating layers.",
+      "One indigo accent; state colors carry meaning, never decoration.",
+      "Geist for UI, Geist Mono for machine literals; tabular numerals for every changing number.",
+      "Compact 32px control height, 6px control radius, 10px container radius.",
+      "Inline plain-language hints next to jargon."
+    ],
+    "rules": [
+      { "name": "The One Accent Rule", "body": "Indigo is the only non-state hue. It means \"act here\", \"you are here\" or \"this is selected\"; it never decorates.", "section": "colors" },
+      { "name": "The State-Only Rule", "body": "Green, amber and red appear only when they report a state (job status, quota level, connection, destructive consequence). Each comes as a solid ink plus a soft fill; pills and callouts use the soft fill with the solid ink.", "section": "colors" },
+      { "name": "The Token-Swap Theme Rule", "body": "Theme changes happen only by re-mapping tokens on the root. Components reference `var(--…)` and never hard-code a theme-specific value.", "section": "colors" },
+      { "name": "The Tabular Rule", "body": "Every number that changes or is compared (tile values, sizes, speeds, percentages, preview counts) uses tabular numerals so live updates never jitter.", "section": "typography" },
+      { "name": "The Machine-Literal Rule", "body": "Geist Mono marks text the machine reads: paths, remote names and `remote:path` routes, backend types, config keys, filter patterns and rate values. Prose, labels and numbers in sentences stay in Geist.", "section": "typography" },
+      { "name": "The Sentence-Case Rule", "body": "No uppercase, no tracked-out labels. Hierarchy comes from weight (400/500/600), size and the three ink levels.", "section": "typography" },
+      { "name": "The Stable Row Rule", "body": "Rows that hold live data keep one height whatever their state. Job rows fix their padding and give the progress cell a fixed width (260px) and a 36px minimum height, so progress, errors and \"concluded\" text swap without moving the table.", "section": "layout" },
+      { "name": "The Hairline-Not-Shadow Rule", "body": "Anything resting on the page (panels, tiles, cards, tables) separates by border and tone. A shadow means \"this floats and will go away\".", "section": "elevation" }
+    ],
+    "dos": [
+      "Do give every page a title and a one-line description, and attach a \"?\" hint to every rclone term where it first appears.",
+      "Do keep controls at 32px (28px for small) and on the 4px spacing scale.",
+      "Do set paths, remote names, `remote:path` routes and other machine literals in Geist Mono, and every changing number in tabular numerals.",
+      "Do reserve the indigo accent for the primary action, focus, selection and progress.",
+      "Do separate resting surfaces with 1px hairlines and tonal steps; use the Pop shadow only for floating layers.",
+      "Do style through tokens so the light theme follows automatically.",
+      "Do keep live rows a fixed height so progress updates never shift layout."
+    ],
+    "donts": [
+      "Don't use green, amber or red for anything except state.",
+      "Don't add drop shadows to panels, tiles, cards or tables.",
+      "Don't introduce uppercase labels, tracked-out kickers or eyebrows above titles.",
+      "Don't set prose or UI labels in mono.",
+      "Don't add a second accent hue or gradients.",
+      "Don't hard-code colors in components; the hard-coded `#fff` on the danger button (about 3.2:1 on dark-theme red, below AA) is a known defect, not a pattern."
+    ]
+  }
+}

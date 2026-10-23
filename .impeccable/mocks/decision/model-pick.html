@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+body{width:1440px;height:900px;overflow:hidden;font:15px/1.45 "Hanken Grotesk",sans-serif;color:#1b1b1b;background:#f7f7f5;display:grid;grid-template-rows:60px 1fr}
+header{background:#1b1b1b;color:#fff;display:flex;align-items:center;gap:28px;padding:0 28px}
+header b{font-size:17px;margin-right:20px}
+header a{color:#bdbdbd;font-weight:500}header a.on{color:#fff;box-shadow:inset 0 -3px 0 #fcd200;padding:19px 0}
+main{display:grid;grid-template-columns:1fr 380px}
+.map{position:relative;padding:28px}
+h1{font-size:28px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.sub{color:#555;margin-bottom:24px}
+svg{display:block}
+.side{background:#fff;border-left:1px solid #e3e3df;padding:28px 24px;display:flex;flex-direction:column;gap:18px}
+.side h2{font-size:15px;font-weight:700}
+.card{border:1px solid #e3e3df;border-radius:8px;padding:14px 16px}
+.line{display:inline-block;width:28px;height:6px;border-radius:3px;vertical-align:middle;margin-right:8px}
+.num{font-variant-numeric:tabular-nums;font-weight:600}
+.bar{height:6px;background:#ececea;border-radius:3px;margin-top:8px}.bar span{display:block;height:100%;border-radius:3px}
+.alert{background:#fff4f3;border:1px solid #ee372f;border-radius:8px;padding:12px 14px;font-size:14px}
+.btn{display:inline-block;background:#0455a1;color:#fff;font-weight:600;padding:9px 14px;border-radius:6px}
+</style></head><body>
+<header><b>rclone</b><a class="on">Visão geral</a><a>Arquivos</a><a>Transferir</a><a>Montar</a><a>Tarefas</a><a>Contas</a></header>
+<main>
+<section class="map">
+ <h1>Visão geral</h1><p class="sub">Seu PC e suas nuvens. Cada linha colorida é uma transferência.</p>
+ <svg width="960" height="640" viewBox="0 0 960 640">
+  <path d="M120 320 H460 Q520 320 520 260 V140 H820" fill="none" stroke="#00a88e" stroke-width="12" stroke-linecap="round"/>
+  <path d="M120 320 H460 Q520 320 520 380 V500 H820" fill="none" stroke="#c9c9c4" stroke-width="12" stroke-dasharray="2 22" stroke-linecap="round"/>
+  <circle cx="120" cy="320" r="26" fill="#fff" stroke="#1b1b1b" stroke-width="8"/>
+  <text x="120" y="385" text-anchor="middle" font-weight="700" font-size="18">Este PC</text>
+  <text x="120" y="408" text-anchor="middle" fill="#666" font-size="14">~/Documents/Obsidian</text>
+  <circle cx="820" cy="140" r="26" fill="#fff" stroke="#00a88e" stroke-width="8"/>
+  <text x="820" y="96" text-anchor="middle" font-weight="700" font-size="18">gustavo-lel-obsidian</text>
+  <text x="820" y="200" text-anchor="middle" fill="#666" font-size="14">Google Drive · 6,2 de 15 GB</text>
+  <circle cx="820" cy="500" r="22" fill="#fff" stroke="#c9c9c4" stroke-width="6"/>
+  <text x="820" y="555" text-anchor="middle" fill="#888" font-size="16">+ Conectar outra nuvem</text>
+  <rect x="440" y="300" width="74" height="40" rx="20" fill="#00a88e"/>
+  <text x="477" y="326" text-anchor="middle" fill="#fff" font-weight="700" font-size="15">68%</text>
+  <text x="300" y="296" text-anchor="middle" fill="#00a88e" font-weight="700" font-size="15">Backup do Obsidian · 1,4 MB/s</text>
+ </svg>
+</section>
+<aside class="side">
+ <div class="alert"><b>Google limitou o ritmo às 17:17.</b> O rclone tentou de novo e conseguiu.</div>
+ <h2>Linhas ativas</h2>
+ <div class="card"><span class="line" style="background:#00a88e"></span><b>Backup do Obsidian</b><div class="bar"><span style="width:68%;background:#00a88e"></span></div><p class="num" style="margin-top:6px">412 de 604 arquivos · resta 2 min</p></div>
+ <h2>Contas</h2>
+ <div class="card"><b>gustavo-lel-obsidian</b><p style="color:#666">Google Drive</p><div class="bar"><span style="width:41%;background:#0455a1"></span></div></div>
+ <span class="btn">Nova transferência</span>
+</aside>
+</main>
+</body></html>

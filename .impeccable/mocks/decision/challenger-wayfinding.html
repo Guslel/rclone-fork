@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0}
+body{width:1440px;height:900px;overflow:hidden;font:15px/1.45 "Hanken Grotesk",sans-serif;color:#111;background:#f4f4f2;display:grid;grid-template-rows:56px 112px 1fr}
+nav{background:#111;color:#fff;display:flex;align-items:center;gap:26px;padding:0 32px}
+nav b{margin-right:24px;font-size:17px}nav a{color:#aaa;font-weight:500}nav a.on{color:#ffcc00}
+.band{background:#ffcc00;display:flex;align-items:center;gap:28px;padding:0 32px}
+.pic{width:64px;height:64px;background:#111;color:#fff;display:grid;place-items:center;font-size:30px;font-weight:800;border-radius:4px}
+.band h1{font-size:34px;font-weight:800;letter-spacing:-.02em}
+.band p{font-size:18px}
+.band .big{margin-left:auto;font-size:56px;font-weight:800;font-variant-numeric:tabular-nums}
+main{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;padding:28px 32px}
+.panel{background:#fff;border-radius:6px;padding:20px 22px;border:1px solid #e1e1dc}
+.panel h2{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:14px}
+.next{display:flex;align-items:center;gap:14px;padding:14px 0;border-top:1px solid #eee;font-size:17px;font-weight:600}
+.next span{margin-left:auto;font-size:22px}
+.num{font-variant-numeric:tabular-nums;font-weight:700}
+.bar{height:10px;background:#eee;margin-top:10px}.bar span{display:block;height:100%;background:#111}
+.note{background:#111;color:#fff;border-radius:6px;padding:14px 16px;margin-top:16px;font-size:14px}
+</style></head><body>
+<nav><b>rclone</b><a class="on">Visão geral</a><a>Arquivos</a><a>Transferir</a><a>Montar</a><a>Tarefas</a><a>Contas</a></nav>
+<section class="band"><div class="pic">↑</div><div><h1>Backup do Obsidian</h1><p>~/Documents/Obsidian → gustavo-lel-obsidian:Vault · resta 2 min</p></div><div class="big">68%</div></section>
+<main>
+ <div class="panel"><h2>Próximo passo</h2>
+  <div class="next">Fazer backup de uma pasta <span>→</span></div>
+  <div class="next">Conectar outra nuvem <span>→</span></div>
+  <div class="next">Usar a nuvem como disco <span>→</span></div>
+  <div class="next">Ver arquivos na nuvem <span>→</span></div>
+ </div>
+ <div class="panel"><h2>Contas</h2>
+  <p style="font-size:18px;font-weight:700">gustavo-lel-obsidian</p><p>Google Drive</p>
+  <div class="bar"><span style="width:41%"></span></div><p class="num" style="margin-top:8px">6,2 de 15 GB</p>
+  <div class="note">“Conta” aqui é o que o rclone chama de remote: uma nuvem já conectada.</div>
+ </div>
+ <div class="panel"><h2>Avisos</h2>
+  <p style="font-weight:700">Google limitou o ritmo às 17:17</p><p>O rclone tentou de novo e conseguiu na 2ª tentativa. Nada foi perdido.</p>
+  <h2 style="margin-top:22px">Hoje</h2><p class="num">3 tarefas · 1,9 GB enviados</p>
+ </div>
+</main>
+</body></html>
