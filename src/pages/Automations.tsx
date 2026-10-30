@@ -1,4 +1,4 @@
-import { ArrowRight, Clock, Eye, History, Pause, Pencil, Play, Plus, RefreshCcw, Trash2, Zap } from "lucide-react";
+import { ArrowLeftRight, ArrowRight, Clock, Eye, History, Pause, Pencil, Play, Plus, RefreshCcw, Trash2, Zap } from "lucide-react";
 import { useState } from "react";
 import type { PageProps } from "../App";
 import { useFeedback } from "../components/feedback";
@@ -14,7 +14,7 @@ export type Automation = {
   nome: string;
   origem: string;
   destino: string;
-  modo: "copy" | "sync";
+  modo: "copy" | "sync" | "bisync";
   aoMudar: boolean;
   intervaloMin: number;
   ignorar: string[];
@@ -71,6 +71,8 @@ function isRootDestination(fs: string) {
   const d = fs.replace(/\\/g, "/").replace(/\/+$/, "");
   return d === "" || /^[^/]*:$/.test(d);
 }
+
+const MODE_LABEL: Record<Automation["modo"], string> = { copy: "Copiar", sync: "Sincronizar", bisync: "Dois sentidos" };
 
 function intervalLabel(min: number) {
   return INTERVALS.find((i) => i.min === min)?.label ?? `a cada ${min} minutos`;
@@ -213,11 +215,15 @@ export default function Automations({ go }: PageProps) {
                 </div>
                 <span className="mono small job-route">
                   <span className="ellipsis">{a.origem}</span>
-                  <ArrowRight size={12} className="faint" style={{ flex: "none" }} />
+                  {a.modo === "bisync" ? (
+                    <ArrowLeftRight size={12} className="faint" style={{ flex: "none" }} />
+                  ) : (
+                    <ArrowRight size={12} className="faint" style={{ flex: "none" }} />
+                  )}
                   <span className="ellipsis">{a.destino}</span>
                 </span>
                 <span className="small muted auto-when">
-                  <span>{a.modo === "copy" ? "Copiar" : "Sincronizar"}</span>
+                  <span>{MODE_LABEL[a.modo]}</span>
                   {a.aoMudar && (
                     <span>
                       <Zap size={12} /> ao mudar
@@ -369,13 +375,17 @@ function Editor({
     setError(null);
     const group = `previa-auto-${Date.now()}`;
     try {
-      await rc(`sync/${a.modo}`, {
-        srcFs: origem,
-        dstFs: destino,
-        _config: { DryRun: true },
-        _group: group,
-        ...(rules.length ? { _filter: { ExcludeRule: rules } } : {}),
-      });
+      const filter = rules.length ? { _filter: { ExcludeRule: rules } } : {};
+      if (bisync) {
+        const params = { path1: origem, path2: destino, dryRun: true, _group: group, ...filter };
+        // Before the first run there are no listings yet: preview the resync instead.
+        await rc("sync/bisync", params).catch((e: Error) => {
+          if (!e.message.includes("bisync aborted")) throw e;
+          return rc("sync/bisync", { ...params, resync: true, resyncMode: "newer" });
+        });
+      } else {
+        await rc(`sync/${a.modo}`, { srcFs: origem, dstFs: destino, _config: { DryRun: true }, _group: group, ...filter });
+      }
       setPreview(await rc<CoreStats>("core/stats", { group }));
     } catch (e) {
       setError((e as Error).message);
@@ -387,12 +397,13 @@ function Editor({
 
   async function submit() {
     setBusy("save");
-    await onSave({ ...a, nome: a.nome.trim(), origem, destino, ignorar: rules, aoMudar: a.aoMudar && localSource, historico: a.historico && !rootDest });
+    await onSave({ ...a, nome: a.nome.trim(), origem, destino, ignorar: rules, aoMudar: a.aoMudar && localSource, historico: a.historico && !rootDest && !bisync });
     setBusy("");
   }
 
   const obsidian = /obsidian/i.test(origem);
   const rootDest = isRootDestination(destino);
+  const bisync = a.modo === "bisync";
   const historyHint = `${destino.replace(/\/+$/, "")}-historico`;
 
   return (
@@ -423,11 +434,11 @@ function Editor({
       </label>
 
       <div className="route">
-        <LocationPicker label="Pasta de origem" remotes={remotes} value={src} onChange={(l) => (setSrc(l), setPreview(null))} allowNew={false} />
+        <LocationPicker label={bisync ? "Lado 1" : "Pasta de origem"} remotes={remotes} value={src} onChange={(l) => (setSrc(l), setPreview(null))} allowNew={false} />
         <div className="route-arrow" aria-hidden>
-          <ArrowRight size={18} />
+          {bisync ? <ArrowLeftRight size={18} /> : <ArrowRight size={18} />}
         </div>
-        <LocationPicker label="Destino" remotes={remotes} value={dst} onChange={(l) => (setDst(l), setPreview(null))} />
+        <LocationPicker label={bisync ? "Lado 2" : "Destino"} remotes={remotes} value={dst} onChange={(l) => (setDst(l), setPreview(null))} />
       </div>
 
       <div className="field">
@@ -439,12 +450,22 @@ function Editor({
           <button role="radio" aria-pressed={a.modo === "sync"} aria-checked={a.modo === "sync"} onClick={() => set({ modo: "sync" })}>
             Sincronizar
           </button>
+          <button role="radio" aria-pressed={bisync} aria-checked={bisync} onClick={() => set({ modo: "bisync", intervaloMin: a.intervaloMin || 15 })}>
+            Dois sentidos
+          </button>
         </div>
         <span className="field-help">
           {a.modo === "copy"
             ? "Envia o que é novo ou mudou. Nunca apaga nada no destino: se você apagar um arquivo da pasta, a cópia continua lá."
-            : "Deixa o destino igual à pasta: se você apagar um arquivo da pasta, ele também é apagado do destino."}
+            : a.modo === "sync"
+              ? "Deixa o destino igual à pasta: se você apagar um arquivo da pasta, ele também é apagado do destino."
+              : "Mudanças de qualquer um dos lados vão para o outro. Use a mesma pasta da nuvem em vários computadores para mantê-los iguais. Na primeira vez, junta os dois lados sem apagar nada."}
         </span>
+        {bisync && (
+          <Callout tone="warn">
+            Apagar um arquivo de um lado apaga também do outro. Se o mesmo arquivo mudar dos dois lados, as duas versões ficam, com “conflict” no nome.
+          </Callout>
+        )}
         {a.modo === "sync" &&
           (a.historico ? (
             <Callout tone="info">Com as versões antigas ligadas, o que for apagado da pasta sai do destino, mas a última versão fica guardada no histórico.</Callout>
@@ -482,40 +503,45 @@ function Editor({
           </span>
         </label>
         {!a.aoMudar && a.intervaloMin === 0 && <span className="field-help" style={{ color: "var(--danger)" }}>Escolha pelo menos uma das opções.</span>}
-      </div>
-
-      <div className="field">
-        <span className="field-label">Versões antigas</span>
-        <label className="check">
-          <input type="checkbox" checked={a.historico} disabled={rootDest} onChange={(e) => set({ historico: e.target.checked })} />
-          <span>
-            Guardar a versão anterior antes de sobrescrever ou apagar
-            <span className="field-help" style={{ display: "block" }}>
-              {rootDest
-                ? "Para guardar versões, escolha uma pasta como destino, não a raiz da conta."
-                : `Guarda numa pasta ao lado do destino (${historyHint}), uma pasta por dia. Se você apagar ou estragar um arquivo, a versão anterior continua lá.`}
-            </span>
-          </span>
-        </label>
-        {a.historico && !rootDest && (
-          <>
-            <label className="field" style={{ maxWidth: 320 }}>
-              <span className="field-label">Manter por quanto tempo</span>
-              <select className="select" value={a.historicoDias} onChange={(e) => set({ historicoDias: Number(e.target.value) })}>
-                {KEEP_DAYS.map((k) => (
-                  <option key={k.dias} value={k.dias}>
-                    {k.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <span className="field-help">
-              Cada versão guardada vira um arquivo com o horário no nome (ex.: <span className="mono">slot1-143005.sav</span>). Ocupa espaço no seu
-              Drive só com o que mudou; as pastas mais antigas que o prazo são apagadas sozinhas.
-            </span>
-          </>
+        {bisync && (
+          <span className="field-help">“Quando algo mudar” só percebe mudanças neste computador. O que mudar na nuvem chega aqui na próxima conferência.</span>
         )}
       </div>
+
+      {!bisync && (
+        <div className="field">
+          <span className="field-label">Versões antigas</span>
+          <label className="check">
+            <input type="checkbox" checked={a.historico} disabled={rootDest} onChange={(e) => set({ historico: e.target.checked })} />
+            <span>
+              Guardar a versão anterior antes de sobrescrever ou apagar
+              <span className="field-help" style={{ display: "block" }}>
+                {rootDest
+                  ? "Para guardar versões, escolha uma pasta como destino, não a raiz da conta."
+                  : `Guarda numa pasta ao lado do destino (${historyHint}), uma pasta por dia. Se você apagar ou estragar um arquivo, a versão anterior continua lá.`}
+              </span>
+            </span>
+          </label>
+          {a.historico && !rootDest && (
+            <>
+              <label className="field" style={{ maxWidth: 320 }}>
+                <span className="field-label">Manter por quanto tempo</span>
+                <select className="select" value={a.historicoDias} onChange={(e) => set({ historicoDias: Number(e.target.value) })}>
+                  {KEEP_DAYS.map((k) => (
+                    <option key={k.dias} value={k.dias}>
+                      {k.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <span className="field-help">
+                Cada versão guardada vira um arquivo com o horário no nome (ex.: <span className="mono">slot1-143005.sav</span>). Ocupa espaço no seu
+                Drive só com o que mudou; as pastas mais antigas que o prazo são apagadas sozinhas.
+              </span>
+            </>
+          )}
+        </div>
+      )}
 
       <label className="field">
         <span className="field-label">
@@ -547,7 +573,7 @@ function Editor({
             </div>
             <div className={`stat ${preview.deletes > 0 ? "danger" : ""}`}>
               <b>{preview.deletes}</b>
-              <span className="small muted">a apagar no destino</span>
+              <span className="small muted">{bisync ? "a apagar" : "a apagar no destino"}</span>
             </div>
             <div className="stat">
               <b>{preview.totalChecks || preview.checks}</b>

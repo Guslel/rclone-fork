@@ -61,11 +61,34 @@ func TestValidate(t *testing.T) {
 		{ID: "d", Nome: "x", Origem: "/a", Destino: "/b", Modo: "move", IntervaloMin: 60},
 		{ID: "e", Nome: "x", Origem: "/a", Destino: "/b", Modo: "copy", IntervaloMin: 2},
 		{ID: "f", Nome: "x", Origem: "/a", Destino: "/a", Modo: "copy", IntervaloMin: 60},
+		{ID: "g", Nome: "x", Origem: "/a", Destino: "drive:b", Modo: "bisync", IntervaloMin: 60, Historico: true},
 	}
 	for _, b := range bad {
 		if err := validate([]Automation{b}); err == nil {
 			t.Errorf("invalid automation %q accepted", b.ID)
 		}
+	}
+}
+
+func TestBisync(t *testing.T) {
+	x := Automation{ID: "a", Nome: "x", Origem: "/home/u/notas", Destino: "drive:notas", Modo: "bisync", AoMudar: true, IntervaloMin: 15}
+	if err := validate([]Automation{x}); err != nil {
+		t.Fatalf("valid bisync automation rejected: %v", err)
+	}
+	p := bisyncParams(x, false)
+	if p["path1"] != x.Origem || p["path2"] != x.Destino || p["resync"] != nil {
+		t.Errorf("unexpected params: %v", p)
+	}
+	if p := bisyncParams(x, true); p["resync"] != true || p["resyncMode"] != "newer" {
+		t.Errorf("resync params missing: %v", p)
+	}
+	y := x
+	y.Ignorar = []string{"*.tmp"}
+	if bisyncPair(x) == bisyncPair(y) {
+		t.Error("changing the ignore rules must require a new resync")
+	}
+	if !needsResync("loopback: call failed: bisync aborted") || needsResync("rate limit") {
+		t.Error("needsResync misclassified")
 	}
 }
 

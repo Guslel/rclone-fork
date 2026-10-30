@@ -17,14 +17,14 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
-// Automation copies or syncs Origem to Destino when files change and/or on a
-// schedule. Origem/Destino are rclone paths ("conta:pasta" or a local path).
+// Automation copies, syncs or bisyncs Origem to Destino when files change
+// and/or on a schedule. Origem/Destino are rclone paths ("conta:pasta" or a local path).
 type Automation struct {
 	ID           string   `json:"id"`
 	Nome         string   `json:"nome"`
 	Origem       string   `json:"origem"`
 	Destino      string   `json:"destino"`
-	Modo         string   `json:"modo"` // "copy" or "sync"
+	Modo         string   `json:"modo"` // "copy", "sync" or "bisync"
 	AoMudar      bool     `json:"aoMudar"`
 	IntervaloMin int      `json:"intervaloMin"` // 0 = no schedule
 	Ignorar      []string `json:"ignorar"`
@@ -61,6 +61,10 @@ type State struct {
 	MudancaEm  *time.Time `json:"mudancaEm,omitempty"`
 	// HistoricoEm is the folder where old versions are kept, if enabled.
 	HistoricoEm string `json:"historicoEm,omitempty"`
+	// BisyncPar records the pair (paths + ignore rules) whose bisync listings
+	// are in place. While it differs from the automation's, the next run
+	// is a resync.
+	BisyncPar string `json:"bisyncPar,omitempty"`
 }
 
 const (
@@ -85,7 +89,7 @@ func newAutomations(dir string, rcd *Rcd) *Automations {
 	saved := map[string]*State{}
 	if a.readJSON("automacoes-estado.json", &saved) == nil {
 		for id, s := range saved {
-			a.st[id] = &State{Historico: s.Historico}
+			a.st[id] = &State{Historico: s.Historico, BisyncPar: s.BisyncPar}
 		}
 	}
 	return a
@@ -158,8 +162,11 @@ func validate(list []Automation) error {
 		if x.Origem == x.Destino {
 			return fmt.Errorf("%s: origem e destino são iguais", x.Nome)
 		}
-		if x.Modo != "copy" && x.Modo != "sync" {
+		if x.Modo != "copy" && x.Modo != "sync" && x.Modo != "bisync" {
 			return fmt.Errorf("%s: modo inválido", x.Nome)
+		}
+		if x.Modo == "bisync" && x.Historico {
+			return fmt.Errorf("%s: versões antigas não estão disponíveis em dois sentidos", x.Nome)
 		}
 		if x.IntervaloMin != 0 && x.IntervaloMin < 5 {
 			return fmt.Errorf("%s: o intervalo mínimo é 5 minutos", x.Nome)
@@ -201,7 +208,7 @@ func (a *Automations) Replace(list []Automation) error {
 	keep := map[string]*State{}
 	for _, x := range list {
 		if s, ok := a.st[x.ID]; ok {
-			keep[x.ID] = &State{Historico: s.Historico}
+			keep[x.ID] = &State{Historico: s.Historico, BisyncPar: s.BisyncPar}
 		} else {
 			keep[x.ID] = &State{}
 		}
@@ -271,7 +278,7 @@ func (a *Automations) saveState() {
 	a.mu.Lock()
 	out := map[string]State{}
 	for id, s := range a.st {
-		out[id] = State{Historico: s.Historico}
+		out[id] = State{Historico: s.Historico, BisyncPar: s.BisyncPar}
 	}
 	a.mu.Unlock()
 	if err := a.writeJSON("automacoes-estado.json", out); err != nil {
@@ -362,6 +369,12 @@ func (a *Automations) run(ctx context.Context, x Automation, reason string) {
 	}()
 
 	params := map[string]any{"srcFs": x.Origem, "dstFs": x.Destino, "_async": true}
+	pair := bisyncPair(x)
+	resync := false
+	if x.Modo == "bisync" {
+		a.update(x.ID, func(s *State) { resync = s.BisyncPar != pair })
+		params = bisyncParams(x, resync)
+	}
 	if x.Historico {
 		// One folder per day; the time suffix keeps every version of a file
 		// changed several times in the day (without it the later version would
@@ -418,11 +431,55 @@ func (a *Automations) run(ctx context.Context, x Automation, reason string) {
 		_ = a.rcd.Call(ctx, "core/stats", map[string]any{"group": fmt.Sprintf("job/%d", started.JobID)}, &stats)
 		r.Sucesso, r.Erro = st.Success, st.Error
 		r.Bytes, r.Enviados, r.Apagados, r.Verificados = stats.Bytes, stats.Transfers, stats.Deletes, stats.Checks
+		if x.Modo == "bisync" {
+			switch {
+			case r.Sucesso:
+				a.update(x.ID, func(s *State) { s.BisyncPar = pair })
+			case needsResync(r.Erro):
+				// Listings are unusable; the next run rebuilds them. A resync
+				// never deletes, so at worst a deleted file comes back.
+				a.update(x.ID, func(s *State) { s.BisyncPar = "" })
+			}
+		}
 		if x.Historico && x.HistoricoDias > 0 {
 			a.cleanHistory(ctx, x)
 		}
 		return
 	}
+}
+
+// ---------- Bisync ----------
+
+// bisyncPair identifies what the bisync listings were built for. Changing the
+// paths or the ignore rules invalidates them, so a new resync is needed.
+func bisyncPair(x Automation) string {
+	return x.Origem + "\x00" + x.Destino + "\x00" + strings.Join(x.Ignorar, "\n")
+}
+
+// bisyncParams builds the sync/bisync call. Conflicts keep both versions,
+// renamed with a "conflict" suffix; recover/resilient avoid needing a resync
+// after an interruption or a passing error.
+func bisyncParams(x Automation, resync bool) map[string]any {
+	p := map[string]any{
+		"path1":     x.Origem,
+		"path2":     x.Destino,
+		"_async":    true,
+		"recover":   true,
+		"resilient": true,
+		"maxLock":   "15m",
+	}
+	if resync {
+		// Union of both sides; when a file differs, the newer one wins.
+		p["resync"] = true
+		p["resyncMode"] = "newer"
+	}
+	return p
+}
+
+// needsResync reports a critical bisync failure. Over rc the error is just
+// "bisync aborted"; the log adds "Must run --resync to recover".
+func needsResync(err string) bool {
+	return strings.Contains(err, "bisync aborted") || strings.Contains(err, "--resync")
 }
 
 // ---------- Folder watching ----------
