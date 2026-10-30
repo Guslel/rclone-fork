@@ -28,7 +28,7 @@ import (
 var distFS embed.FS
 
 // appVersion is the panel's release (tag vX.Y.Z); the updater compares it with GitHub.
-var appVersion = "1.1.0"
+var appVersion = "1.1.1"
 
 func main() {
 	background := flag.Bool("segundo-plano", false, "não abrir o navegador (usado ao iniciar com o computador)")
