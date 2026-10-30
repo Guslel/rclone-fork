@@ -1,6 +1,8 @@
 import { ArrowLeftRight, ArrowRight, ChevronRight, Copy, Eye, FolderInput, Play, RefreshCcw } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import type { PageProps } from "../App";
+import PerfFields from "../components/PerfFields";
+import { ajustesConfig, loadDesempenho, type Ajustes } from "../lib/desempenho";
 import { useFeedback } from "../components/feedback";
 import { LocationPicker, type Location } from "../components/LocationPicker";
 import { Callout, ErrorLine, Hint, PageHead, SkeletonRows, Spinner } from "../components/ui";
@@ -32,6 +34,8 @@ export default function Transfer({ go, params }: PageProps) {
   const [exclude, setExclude] = useState("");
   const [emptyDirs, setEmptyDirs] = useState(false);
   const [resync, setResync] = useState(false);
+  const [ajustes, setAjustes] = useState<Ajustes>({});
+  const perfBase = useAsync(() => loadDesempenho(), []);
   const [preview, setPreview] = useState<Preview | null>(null);
   const [busy, setBusy] = useState<"" | "preview" | "start">("");
   const [error, setError] = useState<string | null>(null);
@@ -44,19 +48,21 @@ export default function Transfer({ go, params }: PageProps) {
     .split("\n")
     .map((l) => l.trim())
     .filter(Boolean);
-  const key = JSON.stringify([mode, srcFs, dstFs, rules, emptyDirs, resync]);
+  const key = JSON.stringify([mode, srcFs, dstFs, rules, emptyDirs, resync, ajustes]);
   const fresh = preview?.key === key;
   const same = srcFs === dstFs;
 
   function body(dryRun: boolean): Record<string, unknown> {
     const filter = rules.length ? { _filter: { ExcludeRule: rules } } : {};
-    if (mode === "bisync") return { path1: srcFs, path2: dstFs, dryRun, resync, ...filter };
+    const perf = ajustesConfig(ajustes);
+    const perfConfig = Object.keys(perf).length ? { _config: perf } : {};
+    if (mode === "bisync") return { path1: srcFs, path2: dstFs, dryRun, resync, ...filter, ...perfConfig };
     return {
       srcFs,
       dstFs,
       createEmptySrcDirs: emptyDirs,
       ...(mode === "move" ? { deleteEmptySrcDirs: true } : {}),
-      ...(dryRun ? { _config: { DryRun: true } } : {}),
+      ...(dryRun || Object.keys(perf).length ? { _config: { ...perf, ...(dryRun ? { DryRun: true } : {}) } } : {}),
       ...filter,
     };
   }
@@ -206,6 +212,13 @@ export default function Transfer({ go, params }: PageProps) {
                 </span>
               </label>
             )}
+            <div className="form-grid">
+              <span className="field-label">Avançado</span>
+              <span className="field-help" style={{ marginTop: -8 }}>
+                Só para esta transferência. Em branco, usa o padrão de Ajustes &gt; Desempenho.
+              </span>
+              <PerfFields value={ajustes} onChange={setAjustes} base={perfBase.data ?? {}} />
+            </div>
           </div>
         </details>
       </section>

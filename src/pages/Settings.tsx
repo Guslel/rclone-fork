@@ -1,11 +1,13 @@
-import { Gauge, Power } from "lucide-react";
+import { Gauge, Power, Rocket } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { PageProps } from "../App";
 import { useFeedback } from "../components/feedback";
+import PerfFields from "../components/PerfFields";
 import { Hint, PageHead, Spinner } from "../components/ui";
 import { useAsync } from "../lib/hooks";
 import { app, rc } from "../lib/rc";
 import { bytes } from "../lib/format";
+import { loadDesempenho, saveDesempenho, type Ajustes } from "../lib/desempenho";
 
 // rclone's K and M are binary (KiB, MiB); bytes() in format.ts uses the same base.
 const PRESETS = [
@@ -37,7 +39,10 @@ export default function SettingsPage(_: PageProps) {
   async function apply(value: string) {
     setBusy(true);
     try {
-      const r = await rc<{ bytesPerSecond: number }>("core/bwlimit", { rate: value });
+      // Saved by the panel, so the limit survives a restart.
+      const saved = await loadDesempenho();
+      await saveDesempenho({ ...saved, limite: value === "off" ? undefined : value });
+      const r = await rc<{ bytesPerSecond: number }>("core/bwlimit", {});
       fb.toast("ok", r.bytesPerSecond > 0 ? `Velocidade limitada a ${bytes(r.bytesPerSecond)}/s.` : "Sem limite de velocidade.");
       bw.reload();
     } catch (e) {
@@ -74,7 +79,7 @@ export default function SettingsPage(_: PageProps) {
 
   return (
     <div className="page">
-      <PageHead title="Ajustes" description="Velocidade, informações do rclone e encerramento." />
+      <PageHead title="Ajustes" description="Velocidade, desempenho, informações do rclone e encerramento." />
 
       <section className="panel panel-pad form-grid">
         <div className="section-head" style={{ marginBottom: 0 }}>
@@ -106,11 +111,13 @@ export default function SettingsPage(_: PageProps) {
             </button>
           </span>
           <span className="field-help">
-            Um número seguido de K ou M: <span className="mono">300K</span> é 300 KB/s, <span className="mono">2M</span> é 2 MB/s. Vale até o rclone ser
-            encerrado.
+            Um número seguido de K ou M: <span className="mono">300K</span> é 300 KB/s, <span className="mono">2M</span> é 2 MB/s. Fica salvo, mesmo
+            depois de fechar o painel.
           </span>
         </form>
       </section>
+
+      <PerfSection />
 
       <section className="section panel panel-pad form-grid">
         <h2 style={{ fontSize: 14, fontWeight: 600 }}>Sobre o rclone</h2>
@@ -174,6 +181,54 @@ function StartupSection() {
           </span>
         </span>
       </label>
+    </section>
+  );
+}
+
+function PerfSection() {
+  const fb = useFeedback();
+  const saved = useAsync(() => loadDesempenho(), []);
+  const [draft, setDraft] = useState<Ajustes | null>(null);
+  const [busy, setBusy] = useState(false);
+  const value = draft ?? saved.data ?? {};
+
+  async function save() {
+    setBusy(true);
+    try {
+      // Keep the speed limit, which has its own section.
+      await saveDesempenho({ ...saved.data, transfers: value.transfers, checkers: value.checkers, ordem: value.ordem });
+      fb.toast("ok", "Desempenho salvo. Vale para as próximas transferências e automações.");
+      setDraft(null);
+      saved.reload();
+    } catch (e) {
+      fb.toast("error", (e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="section panel panel-pad form-grid">
+      <div className="section-head" style={{ marginBottom: 0 }}>
+        <h2>
+          <Rocket size={16} /> Desempenho
+        </h2>
+      </div>
+      <p className="muted">
+        O padrão para todas as transferências e automações. Em cada uma dá para usar valores diferentes, em “Avançado”. Deixe em branco para usar o
+        padrão do rclone.
+      </p>
+      <PerfFields value={value} onChange={setDraft} />
+      <span style={{ display: "flex", gap: 8 }}>
+        <button className="btn primary" onClick={save} disabled={busy || !draft}>
+          {busy && <Spinner size={14} />} Salvar
+        </button>
+        {draft && (
+          <button className="btn ghost" onClick={() => setDraft(null)} disabled={busy}>
+            Descartar
+          </button>
+        )}
+      </span>
     </section>
   );
 }

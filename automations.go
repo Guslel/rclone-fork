@@ -34,6 +34,8 @@ type Automation struct {
 	HistoricoDias int       `json:"historicoDias"` // 0 = keep forever
 	Ativa         bool      `json:"ativa"`
 	CriadaEm      time.Time `json:"criadaEm"`
+	// Avancado overrides the panel-wide performance settings for this one.
+	Avancado Ajustes `json:"avancado"`
 }
 
 // Run is one execution of an automation.
@@ -96,23 +98,32 @@ func newAutomations(dir string, rcd *Rcd) *Automations {
 }
 
 func (a *Automations) readJSON(name string, v any) error {
-	b, err := os.ReadFile(filepath.Join(a.dir, name))
+	return readJSONFile(filepath.Join(a.dir, name), v)
+}
+
+func (a *Automations) writeJSON(name string, v any) error {
+	return writeJSONFile(filepath.Join(a.dir, name), v)
+}
+
+func readJSONFile(p string, v any) error {
+	b, err := os.ReadFile(p)
 	if err != nil {
 		return err
 	}
 	return json.Unmarshal(b, v)
 }
 
-func (a *Automations) writeJSON(name string, v any) error {
+// writeJSONFile replaces p atomically, so a crash never leaves it half written.
+func writeJSONFile(p string, v any) error {
 	b, err := json.MarshalIndent(v, "", "  ")
 	if err != nil {
 		return err
 	}
-	tmp := filepath.Join(a.dir, name+".tmp")
+	tmp := p + ".tmp"
 	if err := os.WriteFile(tmp, b, 0o600); err != nil {
 		return err
 	}
-	return os.Rename(tmp, filepath.Join(a.dir, name))
+	return os.Rename(tmp, p)
 }
 
 func (a *Automations) List() []Automation {
@@ -181,6 +192,9 @@ func validate(list []Automation) error {
 			if x.HistoricoDias < 0 || x.HistoricoDias > 3650 {
 				return fmt.Errorf("%s: número de dias inválido", x.Nome)
 			}
+		}
+		if err := x.Avancado.validate(); err != nil {
+			return fmt.Errorf("%s: %w", x.Nome, err)
 		}
 		if x.AoMudar && !isLocal(x.Origem) {
 			return fmt.Errorf("%s: só dá para vigiar mudanças numa pasta deste computador", x.Nome)
@@ -400,6 +414,16 @@ func (a *Automations) run(ctx context.Context, x Automation, reason string) {
 			"Suffix":              "-" + now.Format("150405"),
 			"SuffixKeepExtension": true,
 		}
+	}
+	if cfg := x.Avancado.config(); len(cfg) > 0 {
+		merged, _ := params["_config"].(map[string]any)
+		if merged == nil {
+			merged = map[string]any{}
+		}
+		for k, v := range cfg {
+			merged[k] = v
+		}
+		params["_config"] = merged
 	}
 	if len(x.Ignorar) > 0 {
 		params["_filter"] = map[string]any{"ExcludeRule": x.Ignorar}

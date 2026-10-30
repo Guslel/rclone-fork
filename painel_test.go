@@ -208,3 +208,18 @@ func TestNewerVersion(t *testing.T) {
 		}
 	}
 }
+
+func TestAjustes(t *testing.T) {
+	if c := (Ajustes{}).config(); len(c) != 0 {
+		t.Fatalf("empty override should change nothing, got %v", c)
+	}
+	c := Ajustes{Transfers: 2, Ordem: "size,ascending"}.config()
+	if c["Transfers"] != 2 || c["OrderBy"] != "size,ascending" || c["Checkers"] != nil {
+		t.Fatalf("unexpected config %v", c)
+	}
+	for _, bad := range []Ajustes{{Transfers: -1}, {Checkers: 65}, {Ordem: "size"}} {
+		if bad.validate() == nil {
+			t.Errorf("%+v accepted", bad)
+		}
+	}
+}

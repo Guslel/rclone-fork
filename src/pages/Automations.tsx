@@ -1,13 +1,15 @@
-import { ArrowLeftRight, ArrowRight, Clock, Eye, History, Pause, Pencil, Play, Plus, RefreshCcw, Trash2, Zap } from "lucide-react";
+import { ArrowLeftRight, ArrowRight, ChevronRight, Clock, Eye, History, Pause, Pencil, Play, Plus, RefreshCcw, Trash2, Zap } from "lucide-react";
 import { useState } from "react";
 import type { PageProps } from "../App";
 import { useFeedback } from "../components/feedback";
 import { LocationPicker, type Location } from "../components/LocationPicker";
+import PerfFields from "../components/PerfFields";
 import { Callout, Dialog, Empty, ErrorLine, Hint, Menu, PageHead, Pill, SkeletonRows, Spinner } from "../components/ui";
 import { LOCAL, bytes, dateTime, duration, fsPath, parseFs, plural, relative } from "../lib/format";
 import { useAsync } from "../lib/hooks";
 import { app, homePath, rc, type CoreStats } from "../lib/rc";
 import { loadRemotes, type RemoteInfo } from "../lib/store";
+import { ajustesConfig, hasAjustes, loadDesempenho, type Ajustes } from "../lib/desempenho";
 
 export type Automation = {
   id: string;
@@ -22,6 +24,7 @@ export type Automation = {
   historicoDias: number;
   ativa: boolean;
   criadaEm?: string;
+  avancado?: Ajustes;
 };
 
 type Run = {
@@ -356,6 +359,9 @@ function Editor({
   const [preview, setPreview] = useState<CoreStats | null>(null);
   const [busy, setBusy] = useState<"" | "preview" | "save">("");
   const [error, setError] = useState<string | null>(null);
+  const perfBase = useAsync(() => loadDesempenho(), []);
+  // Open when editing one that already has overrides; fixed so clearing a field doesn't collapse it.
+  const [advancedOpen] = useState(() => hasAjustes(initial.avancado));
 
   const origem = fsPath(src.remote, src.path);
   const destino = fsPath(dst.remote, dst.path);
@@ -375,7 +381,8 @@ function Editor({
     setError(null);
     const group = `previa-auto-${Date.now()}`;
     try {
-      const filter = rules.length ? { _filter: { ExcludeRule: rules } } : {};
+      const perf = ajustesConfig(a.avancado);
+      const filter = { ...(rules.length ? { _filter: { ExcludeRule: rules } } : {}), ...(Object.keys(perf).length ? { _config: perf } : {}) };
       if (bisync) {
         const params = { path1: origem, path2: destino, dryRun: true, _group: group, ...filter };
         // Before the first run there are no listings yet: preview the resync instead.
@@ -384,7 +391,7 @@ function Editor({
           return rc("sync/bisync", { ...params, resync: true, resyncMode: "newer" });
         });
       } else {
-        await rc(`sync/${a.modo}`, { srcFs: origem, dstFs: destino, _config: { DryRun: true }, _group: group, ...filter });
+        await rc(`sync/${a.modo}`, { srcFs: origem, dstFs: destino, _group: group, ...filter, _config: { ...perf, DryRun: true } });
       }
       setPreview(await rc<CoreStats>("core/stats", { group }));
     } catch (e) {
@@ -559,6 +566,17 @@ function Editor({
           </button>
         )}
       </label>
+
+      <details open={advancedOpen}>
+        <summary className="disclosure">
+          <ChevronRight size={15} className="chev" />
+          Avançado
+        </summary>
+        <div className="form-grid" style={{ marginTop: 12 }}>
+          <span className="field-help">Só para esta automação. Em branco, usa o padrão de Ajustes &gt; Desempenho.</span>
+          <PerfFields value={a.avancado ?? {}} onChange={(v) => (set({ avancado: v }), setPreview(null))} base={perfBase.data ?? {}} />
+        </div>
+      </details>
 
       {preview && (
         <div className="panel panel-pad">

@@ -28,7 +28,7 @@ import (
 var distFS embed.FS
 
 // appVersion is the panel's release (tag vX.Y.Z); the updater compares it with GitHub.
-var appVersion = "1.1.1"
+var appVersion = "1.2.0"
 
 func main() {
 	background := flag.Bool("segundo-plano", false, "não abrir o navegador (usado ao iniciar com o computador)")
@@ -83,6 +83,11 @@ func main() {
 		fatal("Não foi possível iniciar o rclone: %v", err)
 	}
 
+	perf := newPerf(dir, rcd)
+	if err := perf.Apply(ctx); err != nil {
+		logAviso("não foi possível aplicar os ajustes de desempenho: %v", err)
+	}
+
 	auto := newAutomations(dir, rcd)
 	auto.Start(true)
 
@@ -92,6 +97,7 @@ func main() {
 	}
 	srv := newServer(dir, port, secret, rcd, auto, web, appVersion)
 	srv.updater = newUpdater(appVersion)
+	srv.perf = perf
 	httpSrv := &http.Server{Handler: srv, ReadHeaderTimeout: 10 * time.Second}
 	go func() {
 		if err := httpSrv.Serve(ln); err != nil && !errors.Is(err, http.ErrServerClosed) {
