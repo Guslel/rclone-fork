@@ -44,6 +44,9 @@ type release struct {
 
 type Updater struct {
 	current string
+	// exe is resolved at startup: once the running file is renamed to .old,
+	// os.Executable on Linux points at the .old copy.
+	exe     string
 	mu      sync.Mutex
 	checked time.Time
 	latest  *release
@@ -51,7 +54,8 @@ type Updater struct {
 }
 
 func newUpdater(current string) *Updater {
-	return &Updater{current: current}
+	exe, _ := currentExe()
+	return &Updater{current: current, exe: exe}
 }
 
 // assetName is the release file for this OS, as build.sh names it.
@@ -167,9 +171,9 @@ func (u *Updater) Install(ctx context.Context) (string, error) {
 		return "", errors.New("o arquivo baixado não confere com o SHA256SUMS")
 	}
 
-	exe, err := currentExe()
-	if err != nil {
-		return "", err
+	exe := u.exe
+	if exe == "" {
+		return "", errors.New("não foi possível localizar o executável do painel")
 	}
 	tmp := exe + ".novo"
 	if err := os.WriteFile(tmp, data, 0o755); err != nil {
@@ -205,14 +209,10 @@ func removeOldExe() {
 	}
 }
 
-// startUpdated launches the new executable; it waits for this process to free
+// Restart launches the new executable; it waits for this process to free
 // the port (see waitForPort) before starting.
-func startUpdated() error {
-	exe, err := currentExe()
-	if err != nil {
-		return err
-	}
-	cmd := exec.Command(exe, "--segundo-plano", "--apos-atualizar")
+func (u *Updater) Restart() error {
+	cmd := exec.Command(u.exe, "--segundo-plano", "--apos-atualizar")
 	hideWindow(cmd)
 	if err := cmd.Start(); err != nil {
 		return err

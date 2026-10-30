@@ -230,7 +230,7 @@ func (s *Server) api(w http.ResponseWriter, r *http.Request) {
 	case r.URL.Path == "/api/atualizacao" && r.Method == http.MethodPost:
 		tag, err := s.updater.Install(r.Context())
 		if err == nil {
-			err = startUpdated()
+			err = s.updater.Restart()
 		}
 		if err != nil {
 			logErro("atualização: %v", err)
