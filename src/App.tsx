@@ -18,7 +18,7 @@ import UpdateBanner from "./components/UpdateBanner";
 import { FeedbackProvider } from "./components/feedback";
 import { useAsync, useLocalStorage } from "./lib/hooks";
 import { loadJobs } from "./lib/jobs";
-import { loadAppInfo, rc } from "./lib/rc";
+import { app, loadAppInfo, rc, type AppInfo } from "./lib/rc";
 import Login from "./pages/Login";
 import Overview from "./pages/Overview";
 import Files from "./pages/Files";
@@ -171,6 +171,7 @@ function Sidebar({
   setTheme: (t: "dark" | "light") => void;
 }) {
   const version = useAsync((signal) => rc<{ version: string }>("core/version", {}, signal), []);
+  const info = useAsync(() => app<AppInfo>("info"), []);
   const jobs = useAsync((signal) => loadJobs(signal, 20), [], 2500);
   const running = jobs.data?.filter((j) => !j.finished).length ?? 0;
   const online = !jobs.error;
@@ -208,7 +209,10 @@ function Sidebar({
           <span className={`dot ${online ? "ok" : "danger"}`} />
           {online ? "Conectado ao rclone" : "rclone fora do ar"}
         </span>
-        <span className="num">{version.data?.version ?? " "}</span>
+        <span className="num">
+          {version.data ? `rclone ${version.data.version}` : " "}
+          {info.data && ` e painel v${info.data.versao}`}
+        </span>
         <button
           className="btn ghost sm"
           style={{ justifyContent: "flex-start", paddingLeft: 0 }}
