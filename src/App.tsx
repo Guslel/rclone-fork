@@ -209,8 +209,8 @@ function Sidebar({
           <span className={`dot ${online ? "ok" : "danger"}`} />
           {online ? "Conectado ao rclone" : "rclone fora do ar"}
         </span>
-        <span className="num" title="Versão do rclone">{version.data?.version ?? " "}</span>
-        <span className="num" title="Versão do painel">{info.data ? `v${info.data.versao}` : " "}</span>
+        <span className="num">{version.data ? `rclone ${version.data.version}` : " "}</span>
+        <span className="num">{info.data ? `painel v${info.data.versao}` : " "}</span>
         <button
           className="btn ghost sm"
           style={{ justifyContent: "flex-start", paddingLeft: 0 }}
