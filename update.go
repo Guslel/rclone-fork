@@ -20,7 +20,7 @@ import (
 
 // The panel updates itself from the GitHub releases of its repository. A
 // release is tagged vX.Y.Z and carries one executable per OS plus SHA256SUMS.
-const releasesAPI = "https://api.github.com/repos/Guslel/rclone-web/releases/latest"
+const releasesAPI = "https://api.github.com/repos/Guslel/rclone-fork/releases/latest"
 
 // updateCheckEvery limits GitHub API calls (60/hour without a token).
 const updateCheckEvery = 6 * time.Hour
