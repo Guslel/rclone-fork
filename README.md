@@ -40,6 +40,16 @@ go test ./...
 
 O `.exe` é gerado aqui mesmo (compilação cruzada), sem precisar de Windows.
 
+## Lançar uma versão
+
+O painel procura a última release do GitHub (a cada 6 h) e, quando há uma versão maior que a sua, mostra **Atualizar** no topo. O clique baixa o executável do sistema, confere com o `SHA256SUMS` da release, troca o arquivo e reinicia o painel.
+
+1. Suba `appVersion` em `main.go` (ex.: `1.2.0`).
+2. `./build.sh`
+3. `gh release create v1.2.0 release/rclone-painel-linux release/rclone-painel.exe release/SHA256SUMS --notes "O que mudou"`
+
+A tag precisa ser `vX.Y.Z` e os três arquivos precisam estar na release.
+
 Desenvolvimento da interface com recarregamento automático, contra um rclone separado:
 
 ```sh

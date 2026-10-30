@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useState, type ComponentType } from "react";
 import CommandPalette from "./components/CommandPalette";
+import UpdateBanner from "./components/UpdateBanner";
 import { FeedbackProvider } from "./components/feedback";
 import { useAsync, useLocalStorage } from "./lib/hooks";
 import { loadJobs } from "./lib/jobs";
@@ -99,6 +100,7 @@ export default function App() {
         <MobileBar openPalette={() => setPaletteOpen(true)} theme={theme} setTheme={setTheme} />
         <Sidebar current={route.page} go={go} openPalette={() => setPaletteOpen(true)} theme={theme} setTheme={setTheme} />
         <main className="main" id="conteudo">
+          <UpdateBanner />
           <PageView key={`${route.page}?${route.params}`} page={route.page} params={route.params} go={go} />
         </main>
       </div>

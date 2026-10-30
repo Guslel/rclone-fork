@@ -16,4 +16,5 @@ GOWINRES="$(go env GOPATH)/bin/go-winres"
   --product-version 1.0.0 --file-version 1.0.0 --original-filename rclone-painel.exe
 # -H windowsgui: no console window; errors are shown in a message box.
 GOOS=windows GOARCH=amd64 go build -trimpath -ldflags "-s -w -H windowsgui" -o release/rclone-painel.exe .
+(cd release && sha256sum rclone-painel-linux rclone-painel.exe > SHA256SUMS)
 ls -lh release

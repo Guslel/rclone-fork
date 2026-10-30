@@ -374,6 +374,16 @@ func (a *Automations) run(ctx context.Context, x Automation, reason string) {
 	if x.Modo == "bisync" {
 		a.update(x.ID, func(s *State) { resync = s.BisyncPar != pair })
 		params = bisyncParams(x, resync)
+		if resync {
+			// Unlike copy/sync, bisync aborts when either root is missing, so
+			// create them first (the picker promises a new folder will be created).
+			for _, root := range []string{x.Origem, x.Destino} {
+				if err := a.rcd.Call(ctx, "operations/mkdir", map[string]any{"fs": root, "remote": ""}, nil); err != nil {
+					r.Erro = err.Error()
+					return
+				}
+			}
+		}
 	}
 	if x.Historico {
 		// One folder per day; the time suffix keeps every version of a file

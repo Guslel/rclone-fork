@@ -36,6 +36,7 @@ type Server struct {
 	version string
 	quit    chan struct{}
 	proxy   *httputil.ReverseProxy
+	updater *Updater
 }
 
 const cookieName = "rclone_painel"
@@ -222,6 +223,26 @@ func (s *Server) api(w http.ResponseWriter, r *http.Request) {
 		}
 		on, supported := autostartEnabled()
 		writeJSON(w, map[string]bool{"ativo": on, "suportado": supported})
+
+	case r.URL.Path == "/api/atualizacao" && r.Method == http.MethodGet:
+		writeJSON(w, s.updater.Check(r.Context(), r.URL.Query().Get("agora") == "1"))
+
+	case r.URL.Path == "/api/atualizacao" && r.Method == http.MethodPost:
+		tag, err := s.updater.Install(r.Context())
+		if err == nil {
+			err = startUpdated()
+		}
+		if err != nil {
+			logErro("atualização: %v", err)
+			writeErr(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		logInfo("atualizado para %s; reiniciando…", tag)
+		writeJSON(w, map[string]string{"versao": tag})
+		go func() {
+			time.Sleep(300 * time.Millisecond)
+			close(s.quit)
+		}()
 
 	case r.URL.Path == "/api/encerrar" && r.Method == http.MethodPost:
 		writeJSON(w, map[string]bool{"ok": true})

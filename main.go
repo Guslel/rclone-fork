@@ -27,10 +27,12 @@ import (
 //go:embed all:dist
 var distFS embed.FS
 
-const appVersion = "1.0.0"
+// appVersion is the panel's release (tag vX.Y.Z); the updater compares it with GitHub.
+var appVersion = "1.1.0"
 
 func main() {
 	background := flag.Bool("segundo-plano", false, "não abrir o navegador (usado ao iniciar com o computador)")
+	afterUpdate := flag.Bool("apos-atualizar", false, "reinício após uma atualização: espera a versão anterior liberar a porta")
 	flag.Parse()
 
 	port := 5572
@@ -51,6 +53,11 @@ func main() {
 		fatal("Não foi possível preparar o acesso: %v", err)
 	}
 	loginURL := fmt.Sprintf("http://127.0.0.1:%d/entrar?t=%s", port, secret)
+
+	if *afterUpdate {
+		waitForPort(port)
+	}
+	removeOldExe()
 
 	// Already running (e.g. started with the computer): just open the panel.
 	if alreadyRunning(port) {
@@ -84,6 +91,7 @@ func main() {
 		fatal("Painel não encontrado no executável: %v", err)
 	}
 	srv := newServer(dir, port, secret, rcd, auto, web, appVersion)
+	srv.updater = newUpdater(appVersion)
 	httpSrv := &http.Server{Handler: srv, ReadHeaderTimeout: 10 * time.Second}
 	go func() {
 		if err := httpSrv.Serve(ln); err != nil && !errors.Is(err, http.ErrServerClosed) {

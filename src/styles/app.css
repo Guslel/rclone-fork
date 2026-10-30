@@ -710,6 +710,18 @@ textarea.input {
   color: var(--accent);
 }
 
+.update-banner {
+  align-items: center;
+  margin: var(--s-4) auto 0;
+  max-width: calc(1180px - 2 * var(--s-6));
+  width: calc(100% - 2 * var(--s-6));
+}
+
+.update-notes {
+  margin: 4px 0 0;
+  white-space: pre-line;
+}
+
 .empty {
   align-items: center;
   color: var(--text-2);
